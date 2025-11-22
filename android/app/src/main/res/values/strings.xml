@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">class_attendance_frontend</string>
+    <string name="servicedesc">SmartCheck NFC Service</string>
+    <string name="aiddescription">SmartCheck Attendance ID</string>
+</resources>
