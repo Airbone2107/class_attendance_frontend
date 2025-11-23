@@ -33,20 +33,43 @@ class TeacherClassDetailScreen extends StatelessWidget {
               itemBuilder: (context, index) {
                 final lesson = classModel.lessons[index];
                 final dateStr = DateFormat('dd/MM/yyyy').format(lesson.date);
-                
+
                 return Card(
-                  child: ListTile(
-                    title: Text('Buổi ${index + 1}: $dateStr'),
-                    subtitle: Text('Phòng: ${lesson.room} | Ca: ${lesson.shift}'),
-                    trailing: ElevatedButton(
-                      child: const Text('Điểm danh'),
-                      onPressed: () {
-                        // Chuyển sang màn hình tạo session cho buổi học này
-                        context.push('/teacher/create-session', extra: {
-                          'class': classModel,
-                          'lessonId': lesson.lessonId
-                        });
-                      },
+                  margin: const EdgeInsets.only(bottom: 12), // Thêm khoảng cách giữa các Card
+                  child: Padding( // Thêm padding cho nội dung bên trong Card
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: ListTile(
+                      title: Text(
+                        'Buổi ${index + 1}: $dateStr',
+                        style: const TextStyle(fontWeight: FontWeight.w500),
+                      ),
+                      subtitle: Padding(
+                        padding: const EdgeInsets.only(top: 4.0),
+                        child: Text('Phòng: ${lesson.room} | Ca: ${lesson.shift}'),
+                      ),
+                      trailing: ElevatedButton(
+                        // --- SỬA ĐỔI TẠI ĐÂY ---
+                        style: ElevatedButton.styleFrom(
+                          // 1. Tăng padding ngang (horizontal) để chữ không sát viền
+                          // 2. Giảm padding dọc (vertical) để nút bớt "béo"
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+
+                          // 3. Thiết lập kích thước tối thiểu để đảm bảo hình dáng chữ nhật
+                          minimumSize: const Size(110, 40),
+
+                          // Giữ nguyên màu và bo góc từ Theme hoặc chỉnh lại nếu muốn
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        child: const Text('Điểm danh', style: TextStyle(fontSize: 14)),
+                        onPressed: () {
+                          context.push('/teacher/create-session', extra: {
+                            'class': classModel,
+                            'lessonId': lesson.lessonId
+                          });
+                        },
+                      ),
                     ),
                   ),
                 );
@@ -58,4 +81,3 @@ class TeacherClassDetailScreen extends StatelessWidget {
     );
   }
 }
-

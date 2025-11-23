@@ -1,19 +1,25 @@
 import 'package:class_attendance_frontend/api/debug_api.dart';
+import 'package:class_attendance_frontend/providers/auth_provider.dart'; // Import AuthProvider
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart'; // Import Riverpod
+import 'package:go_router/go_router.dart'; // Import GoRouter
 
-class DebugScreen extends StatefulWidget {
+// 1. Đổi thành ConsumerStatefulWidget
+class DebugScreen extends ConsumerStatefulWidget {
   const DebugScreen({super.key});
 
   @override
-  State<DebugScreen> createState() => _DebugScreenState();
+  ConsumerState<DebugScreen> createState() => _DebugScreenState();
 }
 
-class _DebugScreenState extends State<DebugScreen> {
+// 2. Đổi thành ConsumerState
+class _DebugScreenState extends ConsumerState<DebugScreen> {
   final DebugApi _api = DebugApi();
   bool _isLoading = false;
   String _status = '';
 
-  Future<void> _handleAction(String name, Future<String> Function() action) async {
+  // Hàm xử lý chung
+  Future<void> _handleAction(String name, Future<String> Function() action, {bool shouldLogout = false}) async {
     setState(() {
       _isLoading = true;
       _status = 'Đang thực hiện $name...';
@@ -21,6 +27,22 @@ class _DebugScreenState extends State<DebugScreen> {
 
     try {
       final message = await action();
+
+      // --- THÊM LOGIC MỚI TẠI ĐÂY ---
+      if (shouldLogout) {
+        // Xóa dữ liệu local và state đăng nhập
+        await ref.read(authProvider.notifier).logout();
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Reset thành công. Đang đăng xuất...'), backgroundColor: Colors.green),
+          );
+          // Chuyển hướng về trang login
+          context.go('/login');
+          return; // Kết thúc luôn, không cần update state UI nữa vì đã chuyển trang
+        }
+      }
+      // -----------------------------
+
       setState(() {
         _status = '✅ $message';
       });
@@ -39,9 +61,11 @@ class _DebugScreenState extends State<DebugScreen> {
         );
       }
     } finally {
-      setState(() {
-        _isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
     }
   }
 
@@ -69,16 +93,21 @@ class _DebugScreenState extends State<DebugScreen> {
               style: TextStyle(color: Colors.grey),
             ),
             const SizedBox(height: 30),
+
+            // 3. Cập nhật nút Reset DB: thêm tham số shouldLogout: true
             ElevatedButton.icon(
-              onPressed: _isLoading ? null : () => _handleAction('Reset DB', _api.resetDatabase),
+              onPressed: _isLoading
+                  ? null
+                  : () => _handleAction('Reset DB', _api.resetDatabase, shouldLogout: true),
               icon: const Icon(Icons.delete_forever),
-              label: const Text('1. XÓA SẠCH DATABASE'),
+              label: const Text('1. XÓA SẠCH DATABASE & ĐĂNG XUẤT'),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.red.shade100,
                 foregroundColor: Colors.red,
                 padding: const EdgeInsets.all(20),
               ),
             ),
+
             const SizedBox(height: 20),
             ElevatedButton.icon(
               onPressed: _isLoading ? null : () => _handleAction('Seed Mock Data', _api.seedDatabase),
@@ -107,7 +136,7 @@ class _DebugScreenState extends State<DebugScreen> {
                     Text('Thông tin tài khoản Mock:', style: TextStyle(fontWeight: FontWeight.bold)),
                     SizedBox(height: 5),
                     Text('GV: gv001 / password123'),
-                    Text('SV: sv01 -> sv05 / password123'),
+                    Text('SV: sv001, sv02 -> sv05 / password123'),
                   ],
                 ),
               ),
@@ -118,4 +147,3 @@ class _DebugScreenState extends State<DebugScreen> {
     );
   }
 }
-
