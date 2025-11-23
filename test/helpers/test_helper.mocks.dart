@@ -57,8 +57,7 @@ class MockAuthService extends _i1.Mock implements _i4.AuthService {
           Invocation.method(#login, [userId, password]),
         ),
         )),
-      )
-      as _i5.Future<(_i2.User, String)>);
+      ) as _i5.Future<(_i2.User, String)>);
 }
 
 /// A class which mocks [AttendanceApi].
@@ -76,19 +75,24 @@ class MockAttendanceApi extends _i1.Mock implements _i7.AttendanceApi {
         returnValue: _i5.Future<List<_i8.ClassModel>>.value(
           <_i8.ClassModel>[],
         ),
-      )
-      as _i5.Future<List<_i8.ClassModel>>);
+      ) as _i5.Future<List<_i8.ClassModel>>);
 
   @override
-  _i5.Future<_i8.ClassModel> getStudentClassDetail(String? token, String? classId) =>
+  _i5.Future<_i8.ClassModel> getStudentClassDetail(
+      String? token,
+      String? classId,
+      ) =>
       (super.noSuchMethod(
         Invocation.method(#getStudentClassDetail, [token, classId]),
         returnValue: _i5.Future<_i8.ClassModel>.value(
           _i8.ClassModel(
-              classId: 'mock', className: 'mock', credits: 0, group: '0'),
+            classId: 'mock',
+            className: 'mock',
+            credits: 0,
+            group: '0',
+          ),
         ),
-      )
-      as _i5.Future<_i8.ClassModel>);
+      ) as _i5.Future<_i8.ClassModel>);
 
   @override
   _i5.Future<List<_i8.ClassModel>> getTeacherClasses(String? token) =>
@@ -97,15 +101,13 @@ class MockAttendanceApi extends _i1.Mock implements _i7.AttendanceApi {
         returnValue: _i5.Future<List<_i8.ClassModel>>.value(
           <_i8.ClassModel>[],
         ),
-      )
-      as _i5.Future<List<_i8.ClassModel>>);
+      ) as _i5.Future<List<_i8.ClassModel>>);
 
-  // CẬP NHẬT: Thêm tham số lessonId
   @override
   _i5.Future<_i3.SessionModel> createSession(
       String? token,
       String? classId,
-      String? lessonId, // <--- THÊM MỚI
+      String? lessonId,
       int? level,
       ) =>
       (super.noSuchMethod(
@@ -113,37 +115,53 @@ class MockAttendanceApi extends _i1.Mock implements _i7.AttendanceApi {
         returnValue: _i5.Future<_i3.SessionModel>.value(
           _FakeSessionModel_1(
             this,
-            Invocation.method(#createSession, [token, classId, lessonId, level]),
+            Invocation.method(#createSession, [
+              token,
+              classId,
+              lessonId,
+              level,
+            ]),
           ),
         ),
-      )
-      as _i5.Future<_i3.SessionModel>);
+      ) as _i5.Future<_i3.SessionModel>);
 
   @override
-  _i5.Future<Map<String, dynamic>> getSessionStats(String? token, String? sessionId) =>
+  _i5.Future<Map<String, dynamic>> getSessionStats(
+      String? token,
+      String? sessionId,
+      ) =>
       (super.noSuchMethod(
         Invocation.method(#getSessionStats, [token, sessionId]),
         returnValue: _i5.Future<Map<String, dynamic>>.value(
           <String, dynamic>{},
         ),
-      )
-      as _i5.Future<Map<String, dynamic>>);
+      ) as _i5.Future<Map<String, dynamic>>);
 
   @override
   _i5.Future<String> checkIn(
       String? token,
       String? sessionId,
       String? nfcCardId, {
-        String? faceVector,
+        List<double>? faceEmbedding,
       }) =>
       (super.noSuchMethod(
         Invocation.method(
           #checkIn,
           [token, sessionId, nfcCardId],
-          {#faceVector: faceVector},
+          {#faceEmbedding: faceEmbedding},
         ),
         returnValue: _i5.Future<String>.value('mock_class_id'),
         returnValueForMissingStub: _i5.Future<String>.value('mock_class_id'),
-      )
-      as _i5.Future<String>);
+      ) as _i5.Future<String>);
+
+  @override
+  _i5.Future<void> registerFace(
+      String? token,
+      List<double>? faceEmbedding,
+      ) =>
+      (super.noSuchMethod(
+        Invocation.method(#registerFace, [token, faceEmbedding]),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
 }

@@ -7,6 +7,8 @@ import 'package:class_attendance_frontend/screens/student/attendance/face_scan_s
 import 'package:class_attendance_frontend/screens/student/attendance/nfc_scan_screen.dart';
 import 'package:class_attendance_frontend/screens/student/attendance/qr_scan_screen.dart';
 import 'package:class_attendance_frontend/screens/student/course_detail_screen.dart';
+import 'package:class_attendance_frontend/screens/student/settings/face_registration_screen.dart';
+import 'package:class_attendance_frontend/screens/student/settings/settings_screen.dart';
 import 'package:class_attendance_frontend/screens/student/student_home_screen.dart';
 import 'package:class_attendance_frontend/screens/teacher/class_detail_screen.dart';
 import 'package:class_attendance_frontend/screens/teacher/session/create_session_screen.dart';
@@ -103,6 +105,14 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/student/scan-face',
         builder: (context, state) => const FaceScanScreen(),
+      ),
+      GoRoute(
+        path: '/student/settings',
+        builder: (context, state) => const SettingsScreen(),
+      ),
+      GoRoute(
+        path: '/student/register-face',
+        builder: (context, state) => const FaceRegistrationScreen(),
       ),
     ],
   );

@@ -6,7 +6,7 @@ class AttendanceState {
   final String? sessionId;
   final int? sessionLevel;
   final String? nfcCardId;
-  final String? faceVector;
+  final List<double>? faceEmbedding; // Đổi từ String sang List<double>
   final bool isLoading;
   final String? error;
   final String? successClassId; // ClassID đích để điều hướng sau khi xong
@@ -15,7 +15,7 @@ class AttendanceState {
     this.sessionId,
     this.sessionLevel,
     this.nfcCardId,
-    this.faceVector,
+    this.faceEmbedding,
     this.isLoading = false,
     this.error,
     this.successClassId,
@@ -25,7 +25,7 @@ class AttendanceState {
     String? sessionId,
     int? sessionLevel,
     String? nfcCardId,
-    String? faceVector,
+    List<double>? faceEmbedding,
     bool? isLoading,
     String? error,
     String? successClassId,
@@ -34,7 +34,7 @@ class AttendanceState {
       sessionId: sessionId ?? this.sessionId,
       sessionLevel: sessionLevel ?? this.sessionLevel,
       nfcCardId: nfcCardId ?? this.nfcCardId,
-      faceVector: faceVector ?? this.faceVector,
+      faceEmbedding: faceEmbedding ?? this.faceEmbedding,
       isLoading: isLoading ?? this.isLoading,
       error: error,
       successClassId: successClassId ?? this.successClassId,
@@ -59,8 +59,8 @@ class AttendanceNotifier extends Notifier<AttendanceState> {
     state = state.copyWith(nfcCardId: id, error: null);
   }
   
-  void setFaceVector(String vector) {
-    state = state.copyWith(faceVector: vector);
+  void setFaceEmbedding(List<double> vector) {
+    state = state.copyWith(faceEmbedding: vector);
   }
 
   void reset() {
@@ -79,7 +79,7 @@ class AttendanceNotifier extends Notifier<AttendanceState> {
         authState.token!,
         state.sessionId!,
         state.nfcCardId!,
-        faceVector: state.faceVector,
+        faceEmbedding: state.faceEmbedding,
       );
       // Lưu classId để UI biết đường chuyển trang
       state = state.copyWith(isLoading: false, successClassId: classId);

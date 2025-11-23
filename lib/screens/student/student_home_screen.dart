@@ -132,7 +132,12 @@ class _HomeTab extends StatelessWidget {
                   ],
                 ),
                 const Spacer(),
-                IconButton(icon: const Icon(Icons.notifications_none), onPressed: () {})
+                IconButton(
+                  icon: const Icon(Icons.settings), 
+                  onPressed: () {
+                    context.push('/student/settings');
+                  }
+                )
               ],
             ),
             const SizedBox(height: 40),

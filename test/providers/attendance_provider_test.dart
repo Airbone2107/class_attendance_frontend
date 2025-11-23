@@ -37,13 +37,10 @@ void main() {
     test('submitCheckIn thất bại nếu chưa đăng nhập', () async {
       container = createContainer();
 
-      // Act: Gọi hàm khi chưa login (authProvider mặc định là chưa login)
+      // Act: Gọi hàm khi chưa login
       await container.read(attendanceProvider.notifier).submitCheckIn();
 
-      // Assert: Mặc định auth state là unauthenticated, nên submitCheckIn return void sớm
-      // Tuy nhiên, nếu không có token thì hàm submitCheckIn (đã update) sẽ return luôn.
-      // Để test fail do auth, ta có thể check state không thay đổi hoặc thêm cờ.
-      // Ở code hiện tại, nếu token == null, nó return.
+      // Assert
       final state = container.read(attendanceProvider);
       expect(state.isLoading, false);
     });
@@ -63,13 +60,19 @@ void main() {
 
       // Setup data điểm danh
       final notifier = container.read(attendanceProvider.notifier);
-      // setSessionData bây giờ nhận (id, level)
       notifier.setSessionData('SESSION_1', 1);
       notifier.setNfcCardId('NFC_1');
+      // Nếu cần test face, dùng setFaceEmbedding
+      // notifier.setFaceEmbedding([0.1, 0.2]);
 
       // Mock API checkIn trả về classId (String)
-      when(mockAttendanceApi.checkIn(any, any, any, faceVector: anyNamed('faceVector')))
-          .thenAnswer((_) async => Future.value('CLASS_123'));
+      // SỬA LỖI: Dùng faceEmbedding thay vì faceVector
+      when(mockAttendanceApi.checkIn(
+        any,
+        any,
+        any,
+        faceEmbedding: anyNamed('faceEmbedding'),
+      )).thenAnswer((_) async => Future.value('CLASS_123'));
 
       // Act
       await notifier.submitCheckIn();
@@ -77,10 +80,16 @@ void main() {
       // Assert
       final state = container.read(attendanceProvider);
       expect(state.isLoading, false);
-      expect(state.successClassId, 'CLASS_123'); // CẬP NHẬT: Kiểm tra successClassId
+      expect(state.successClassId, 'CLASS_123');
       expect(state.error, null);
 
-      verify(mockAttendanceApi.checkIn('fake_token', 'SESSION_1', 'NFC_1', faceVector: null)).called(1);
+      // SỬA LỖI: Verify với tham số faceEmbedding
+      verify(mockAttendanceApi.checkIn(
+        'fake_token',
+        'SESSION_1',
+        'NFC_1',
+        faceEmbedding: null,
+      )).called(1);
     });
 
     test('submitCheckIn báo lỗi khi API trả về lỗi', () async {
@@ -99,8 +108,13 @@ void main() {
       notifier.setNfcCardId('NFC_1');
 
       // Mock API checkIn ném lỗi
-      when(mockAttendanceApi.checkIn(any, any, any, faceVector: anyNamed('faceVector')))
-          .thenThrow(Exception('Invalid NFC'));
+      // SỬA LỖI: Dùng faceEmbedding
+      when(mockAttendanceApi.checkIn(
+        any,
+        any,
+        any,
+        faceEmbedding: anyNamed('faceEmbedding'),
+      )).thenThrow(Exception('Invalid NFC'));
 
       // Act
       await notifier.submitCheckIn();
